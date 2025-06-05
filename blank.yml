@@ -1,0 +1,37 @@
+name: Real Artifact Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-file:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create real data file
+        run: |
+          mkdir my-files
+          echo "🔥 Привет! Это реальный файл с данными." > my-files/data.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: real-data
+          path: my-files/data.txt
+
+  use-file:
+    runs-on: ubuntu-22.04
+    needs: generate-file
+    steps:
+      - name: Download artifact to custom folder
+        uses: actions/download-artifact@v4
+        with:
+          name: real-data
+          path: my-files/
+
+      - name: Print content of data.txt
+        run: cat my-files/data.txt
